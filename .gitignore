@@ -1,0 +1,17 @@
+# build artifacts
+build/
+*.nro
+*.nacp
+*.elf
+*.npdm
+*.nso
+*.pfs0
+*.nsp
+*.map
+*.lst
+hacBrewPack/
+
+# editor / OS noise
+.DS_Store
+Thumbs.db
+*.swp
