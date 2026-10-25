@@ -25,7 +25,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 TARGET      := SafeShutdown
 APP_TITLE   := Safe Shutdown
-APP_AUTHOR  := SunMaojie
+APP_AUTHOR  := smj
 APP_VERSION := 1.4.4
 
 BUILD       := build
