@@ -195,6 +195,7 @@ source/main.cpp        the whole tool
 Makefile               devkitPro / libnx build
 icon.jpg               256x256 JPEG embedded as the NACP icon
 tools/nacp_info.py     read name / author / version from an NRO's NACP
+CHANGELOG.md           version history
 ```
 
 ## Credits
