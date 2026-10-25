@@ -11,6 +11,82 @@ Works on Erista and Mariko, no cracking noise on Mariko.
 
 ---
 
+## What it looks like
+
+This is a console app, so the UI is literally text. Below is the actual screen —
+an 80x45 character console, everything centered:
+
+```
+              +==================================================+
+              |                                                  |
+              |            S A F E   S H U T D O W N             |
+              |                                                  |
+              +==================================================+
+
+                                Shutting down in
+
+                                    #######
+                                    #######
+                                         ##
+                                         ##
+                                    #######
+                                    #######
+                                         ##
+                                         ##
+                                    #######
+                                    #######
+                                    seconds
+
+                            Press  [ B ]  to cancel
+
+               --------------------------------------------------
+                   v1.4.4   2026-10-25      mode: Application
+               --------------------------------------------------
+```
+
+The last line reports which mode you were launched in — `LibraryApplet` from the
+Album, `Application` from a forwarder. That is exactly the information that
+decides which shutdown API can work.
+
+## Features
+
+| | |
+|---|---|
+| **Countdown** | 3 seconds, large 7x10 block digits; `second` / `seconds` handled correctly |
+| **Cancel** | press **B** or **+** during the countdown |
+| **Works everywhere** | Homebrew Menu (Album) *and* NSP forwarders |
+| **API dispatch** | picks the call that is legal for the current applet type |
+| **Fallback chain** | primary API → the other official API → `spsmShutdown()` |
+| **Self-diagnosing** | if all three fail it stops and prints every return code, so you can report it |
+| **Centered layout** | computed from `consoleGetDefault()->windowWidth/Height`, never hard-coded |
+| **Custom icon** | 256x256 JPEG embedded in the NACP |
+
+### What happens when you run it
+
+1. Console opens, screen is drawn, countdown starts at 3.
+2. Digits tick down once per second (`svcGetSystemTick()`, not frame counting).
+3. At zero it calls the shutdown API for your applet type and waits ~1.2s.
+4. If the console is still alive, it tries the other official API, then
+   `spsmShutdown()`, waiting ~1.2s after each.
+5. If every call failed, the screen switches to a diagnostic view listing
+   `mode`, each API's return code, and waits for **B**.
+
+Pressing **B** or **+** at any point before step 3 aborts and returns to where
+you came from.
+
+> This tool only **shuts down**. It does not reboot, and it does not touch your
+> saves — the system handles that on the way out.
+
+## Usage
+
+Requires a Switch running [Atmosphere-NX](https://github.com/Atmosphere-NX/Atmosphere).
+
+Copy `SafeShutdown.nro` to `sdmc:/switch/` and launch it from the Homebrew Menu
+(hold **R** while opening the Album). You can also install it as a forwarder
+(e.g. with Sphaira) so it appears on the home menu.
+
+Press **B** or **+** during the countdown to abort.
+
 ## Why the original stopped working
 
 The original is 11 lines:
@@ -48,21 +124,6 @@ Getting this wrong looks exactly like "it counts down, then drops back to the
 home menu". This build dispatches on `appletGetAppletType()` and then falls back
 through the other API and finally Atmosphere's `spsmShutdown()`, printing the
 return code of each on screen if everything fails.
-
-## Features
-
-- **3 second countdown**, press **B** or **+** to cancel
-- Works from **Homebrew Menu** and from an **NSP forwarder**
-- Three-stage API fallback with on-screen error codes
-- Centered UI with large 7x10 block digits
-
-## Usage
-
-Copy `SafeShutdown.nro` to `sdmc:/switch/` and launch it from the Homebrew Menu
-(hold **R** while opening the Album). You can also install it as a forwarder
-(e.g. with Sphaira) so it appears on the home menu.
-
-Press **B** or **+** during the countdown to abort.
 
 ## Build
 
